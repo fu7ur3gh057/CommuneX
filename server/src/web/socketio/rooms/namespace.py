@@ -5,6 +5,8 @@ from src.db.dao.message_dao import MessageDAO
 from src.db.dao.project_dao import ProjectDAO
 from src.db.dao.room_dao import RoomDAO
 from src.db.dao.user_dao import UserDAO
+from src.schemas.chat_schema import ClientCreateSchema
+from src.schemas.message_schema import MessageCreateSchema
 
 
 class RoomNamespace(socketio.AsyncNamespace):
@@ -17,21 +19,26 @@ class RoomNamespace(socketio.AsyncNamespace):
         self.message_dao = MessageDAO()
 
     async def on_enter(self, sid: str, data: dict) -> None:
-        print(f"Created new room {sid}")
-        await self.enter_room(sid=sid, room=sid)
-        is_member = data["is_member"]
-        external_id = data["external_id"]
-        if not is_member:
+        is_member = data.get("is_member", False)
+        external_id = data.get("external_id", None)
+        if not external_id:
+            return None
+        # Enter as member
+        if is_member:
             await self.enter_room(sid=sid, room=external_id)
             return None
-        project = data["project"]
-        client = self.client_dao.get_by_external_id(external_id)
+        project = data.get("project", None)
+        client = await self.client_dao.get_by_external_id(external_id)
         if not client:
             # create client
-            pass
+            schema = ClientCreateSchema(external_id=external_id, project=project)
+            await self.client_dao.create(data=schema)
+        await self.enter_room(sid=sid, room=external_id)
 
     async def on_message(self, sid: str, data: dict) -> None:
-        pass
+        schema = MessageCreateSchema(**data)
+        message = await self.message_dao.create(data=schema)
+        await self.emit(event="BROADCAST", to=message.room, data=message.model_dump())
 
     async def on_exit(self, sid: str, data: dict) -> None:
-        pass
+        await self.leave_room(sid=sid, room=data["room"])

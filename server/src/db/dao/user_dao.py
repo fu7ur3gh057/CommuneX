@@ -13,7 +13,7 @@ class UserDAO:
         return [user.to_pydantic() for user in users]
 
     async def filter(
-            self, email: str | None = None, role_type: RoleType | None = None
+        self, email: str | None = None, role_type: RoleType | None = None
     ) -> list[UserReadSchema]:
         query = await User.all()
         if email:

@@ -24,7 +24,5 @@ class Project(Model, PKIDMixin, TimeStampedMixin):
     async def to_pydantic(self) -> ProjectReadSchema:
         membership = [user.pk_id for user in await self.membership.all()]
         return ProjectReadSchema(
-            owner=self.owner.pk_id,
-            members=membership,
-            title=self.title
+            owner=self.owner.pk_id, members=membership, title=self.title
         )

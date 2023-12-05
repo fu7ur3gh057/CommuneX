@@ -10,8 +10,8 @@ class Message(Model, PKIDMixin, TimeStampedMixin):
     images: fields.JSONField = fields.JSONField(null=True)
     files: fields.JSONField = fields.JSONField(null=True)
     # Sender
-    is_support: fields.BooleanField = fields.BooleanField(default=False)
     sender_id: fields.IntField = fields.IntField()
+    is_member: fields.BooleanField = fields.BooleanField(default=False)
     # Room
     room: fields.ForeignKeyRelation = fields.ForeignKeyField(
         model_name="models.Room", related_name="messages", on_delete=fields.CASCADE
