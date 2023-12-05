@@ -1,6 +1,7 @@
 from typing import Awaitable, Callable
 
 from fastapi import FastAPI
+
 # from sqladmin import Admin
 # from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncEngine
 #
@@ -23,7 +24,7 @@ from fastapi import FastAPI
 
 
 def register_startup_event(
-        app: FastAPI,
+    app: FastAPI,
 ) -> Callable[[], Awaitable[None]]:  # pragma: no cover
     @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
@@ -41,7 +42,7 @@ def register_startup_event(
 
 
 def register_shutdown_event(
-        app: FastAPI,
+    app: FastAPI,
 ) -> Callable[[], Awaitable[None]]:  # pragma: no cover
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430

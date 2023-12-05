@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     db_port: int = 5432
     db_user: str = "postgres"
     db_pass: str = "1234"
-    db_base: str = "bridge_db"
+    db_base: str = "communex_db"
     db_echo: bool = False
 
     # Variables for Redis
@@ -74,7 +74,7 @@ class Settings(BaseSettings):
         :return: database URL.
         """
         return URL.build(
-            scheme="postgresql+asyncpg",
+            scheme="postgres",
             host=self.db_host,
             port=self.db_port,
             user=self.db_user,
